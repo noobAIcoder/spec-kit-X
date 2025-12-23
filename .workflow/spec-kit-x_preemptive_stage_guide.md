@@ -119,7 +119,7 @@ flowchart TB
 
 Each `specify` string **MUST** include:
 
-* `Short Name: <short-name>`
+* `Short Name: <short_name>`
 * Goal (what success looks like)
 * Primary actor(s) and user journey
 * Acceptance scenarios in Given/When/Then form
