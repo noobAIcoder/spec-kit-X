@@ -71,6 +71,7 @@ Rules:
 * **Proposed Short Name**: kebab-case; **SHOULD** be unique; **SHOULD** map cleanly to Spec-Kit suffix.
 * **Depends On / Preferred Order**: **SHOULD** be explicit even if “none / earliest”.
 * **Codex input**: **MUST** be sufficient to generate `spec.md` (actors, flows, acceptance scenarios, constraints).
+* **Codex input**: **MUST NOT** have line breaks.
 
 ---
 
@@ -89,9 +90,9 @@ Each slice input block **MUST** include:
 
 ## 7. Constitution generation requirements
 
-### 7.1 What `constitution.md` MUST encode
+---
 
-`constitution.md` **MUST** encode:
+### 7.1 `constitution.md` MUST encode
 
 * GitHub usage **MUST** include branching and PR workflow (issues **MUST NOT** be required).
 * WSL-only execution constraints: bash-first; prerequisites checks **MUST** run via WSL shell.
@@ -101,9 +102,7 @@ Each slice input block **MUST** include:
 
 ---
 
-### 7.2 What `constitution.md` MUST NOT encode
-
-`constitution.md` **MUST NOT** encode:
+### 7.2 `constitution.md` MUST NOT encode
 
 * Slice-specific implementation details (those belong in per-slice `spec.md`/`plan.md`).
 * Concrete task lists or task IDs (those belong in `tasks.md`).
@@ -113,3 +112,5 @@ Each slice input block **MUST** include:
 * Detailed UI copywriting, marketing text, or product messaging (unless it is a global compliance requirement).
 * Hard commitments to specific third-party vendors/services **unless** they are explicitly mandated by requirements and approved in Phase 1.
 * Non-actionable aspirational statements (“be scalable”, “be secure”) without enforceable gates or measurable criteria.
+
+---
