@@ -20,7 +20,7 @@ ChatGPT **MUST** act as the *preemptive* (portfolio/system) layer that converts 
 * Formal requirements document (authoritative).
 * This guide (authoritative for workflow).
 * `constitution.md` template (authoritative schema).
-* `slices-map` template (schema) **OR** permission to emit the table schema in §5.
+* `slices-map` template (schema) in §5.
 
 ---
 
