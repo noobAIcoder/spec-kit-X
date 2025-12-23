@@ -1,10 +1,8 @@
-# Spec-Kit Preemptive Stage Guide
+# Spec-Kit Preemptive Stage Guide for ChatGPT
 
 ## 0. Purpose
 
 ChatGPT **MUST** act as the *preemptive* (portfolio/system) layer that converts a formal requirements document into: (a) an approved architecture + stack direction, (b) a generated `constitution.md`, and (c) a slice map where **Slice == Spec-Kit Feature**. Codex **MUST** execute per-slice `/prompts:speckit.specify`, then `/prompts:speckit.plan`, then `/prompts:speckit.tasks`.
-
----
 
 ## 1. Roles and environment
 
@@ -13,16 +11,12 @@ ChatGPT **MUST** act as the *preemptive* (portfolio/system) layer that converts 
 * **Codex (per-slice)**: runs Spec-Kit prompts and bash scripts on **WSL only**.
 * **Repo**: **monorepo**. GitHub integration is **MUST** for **version control, branching, PRs** (issues are **out of scope**).
 
----
-
 ## 2. Inputs ChatGPT MUST receive
 
 * Formal requirements document (authoritative).
 * This guide (authoritative for workflow).
 * `constitution.md` template (authoritative schema).
-* `slices-map` template (schema) in §5.
-
----
+* `slices-map` template (schema) **OR** permission to emit the table schema in §5.
 
 ## 3. Outputs ChatGPT MUST produce
 
@@ -36,8 +30,6 @@ ChatGPT **MUST** act as the *preemptive* (portfolio/system) layer that converts 
 * `constitution.md` filled from template.
 * Slice map table (one row per slice; includes dependencies + preferred order).
 * Per-slice **Codex input texts** for `/prompts:speckit.specify` (one block per slice).
-
----
 
 ## 4. Process constraints
 
@@ -58,12 +50,28 @@ flowchart TB
   G2 --> C["Operator runs Codex: specify → plan → tasks per slice (WSL/bash)"]
 ```
 
----
-
 ## 5. Slice map schema (ChatGPT MUST output as a pipe table)
 
 | Slice Key | Proposed Short Name | Core User Story | Depends On | Preferred Order | Scope (In/Out) | Shared Components | Data/Contracts Touchpoints | Codex `/prompts:speckit.specify` Input |
 | --------- | ------------------- | --------------- | ---------- | --------------- | -------------- | ----------------- | -------------------------- | -------------------------------------- |
+
+### 5.1 Slice scope contract
+
+A slice **MUST**:
+
+* Deliver **one coherent capability** with a single primary user journey and clear success outcome.
+* Be **independently valuable** (shippable as an increment) and **independently testable** via acceptance scenarios.
+* Declare **explicit boundaries**: what is in-scope vs out-of-scope for this slice.
+* Declare **touchpoints** only: modules/services/components affected; DB/contract touchpoints at a high level.
+* Declare **dependencies** (other slices or shared components) and a **preferred execution order**.
+
+A slice **MUST NOT**:
+
+* Combine multiple unrelated user journeys or “grab-bag” enhancements.
+* Encode global architecture/stack decisions (those belong in `constitution.md`).
+* Include task breakdowns, task IDs, or implementation sequencing details (those belong in `/prompts:speckit.tasks` output).
+* Require cross-cutting refactors as a primary deliverable (refactors MAY be allowed only if explicitly justified and bounded).
+* Include secrets, credentials, tokens, or any sensitive operational data.
 
 Rules:
 
@@ -71,8 +79,6 @@ Rules:
 * **Proposed Short Name**: kebab-case; **SHOULD** be unique; **SHOULD** map cleanly to Spec-Kit suffix.
 * **Depends On / Preferred Order**: **SHOULD** be explicit even if “none / earliest”.
 * **Codex input**: **MUST** be sufficient to generate `spec.md` (actors, flows, acceptance scenarios, constraints).
-
----
 
 ## 6. Per-slice `/prompts:speckit.specify` input contract
 
@@ -82,10 +88,14 @@ Each slice input block **MUST** include:
 * Primary actor(s), journey, and success outcome.
 * Acceptance scenarios (Given/When/Then) sufficient for independently testable user stories.
 * Non-functional constraints relevant to the slice (security/privacy/perf/operability).
-* Explicit integration points (monorepo modules, shared DB/infra, auth, PR workflow constraints).
+* Explicit integration points (monorepo modules, shared DB/infra touchpoints, auth constraints, PR workflow constraints).
 * At most **3** ambiguity questions; remaining unknowns **MUST** be resolved via defaults + recorded assumptions.
 
----
+Each slice input block **MUST NOT** include:
+
+* Detailed architecture diagrams or stack debates (reference constitution constraints instead).
+* Detailed schemas/migrations, endpoint-by-endpoint design, or “how to implement” instructions (those belong in plan/contracts/data-model artifacts created by Codex).
+* Any secrets or environment-specific absolute paths.
 
 ## 7. Constitution generation requirements
 
@@ -99,8 +109,6 @@ Each slice input block **MUST** include:
 * Stack decisions and allowed variants (and what requires explicit approval).
 * Quality gates that Codex plans **MUST** satisfy (simplicity/consistency/testing/observability as applicable).
 
----
-
 ### 7.2 What `constitution.md` MUST NOT encode
 
 `constitution.md` **MUST NOT** encode:
@@ -110,11 +118,9 @@ Each slice input block **MUST** include:
 * GitHub Issues workflows or “issues as gates” (explicitly out of scope).
 * Secrets, credentials, tokens, API keys, or any sensitive operational data.
 * Environment-specific absolute paths tied to a single machine/user (except the repo-relative constitution location policy in §4).
-* Detailed UI copywriting, marketing text, or product messaging (unless it is a global compliance requirement).
-* Hard commitments to specific third-party vendors/services **unless** they are explicitly mandated by requirements and approved in Phase 1.
-* Non-actionable aspirational statements (“be scalable”, “be secure”) without enforceable gates or measurable criteria.
-
----
+* Detailed UI copywriting/marketing text unless globally mandated by requirements.
+* Hard commitments to specific third-party vendors/services unless explicitly mandated and approved in Phase 1.
+* Aspirational statements without enforceable gates (“be scalable”, “be secure”).
 
 ## 8. Codex handoff protocol (operator-run; explicit agency)
 
