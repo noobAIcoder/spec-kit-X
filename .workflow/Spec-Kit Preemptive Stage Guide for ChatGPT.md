@@ -2,132 +2,156 @@
 
 ## 0. Purpose
 
-ChatGPT **MUST** act as the *preemptive* (portfolio/system) layer that converts a formal requirements document into: (a) an approved architecture + stack direction, (b) a generated `constitution.md`, and (c) a slice map where **Slice == Spec-Kit Feature**. Codex **MUST** execute per-slice `/prompts:speckit.specify`, then `/prompts:speckit.plan`, then `/prompts:speckit.tasks`.
+ChatGPT **MUST** act as the *preemptive* (portfolio/system) layer that transforms a formal requirements document into:
 
-## 1. Roles and environment
+* an approved architecture + stack direction,
+* a generated `constitution.md`,
+* a JSON slice map where **Slice == Spec-Kit Feature**.
 
-* **Operator (human)**: approves Phase 1 outputs; invokes Codex commands; applies repo changes.
-* **ChatGPT (preemptive)**: architecture/stack + constitution + slicing + per-slice specify input texts.
-* **Codex (per-slice)**: runs Spec-Kit prompts and bash scripts on **WSL only**.
-* **Repo**: **monorepo**. GitHub integration is **MUST** for **version control, branching, PRs** (issues are **out of scope**).
+Codex execution **MUST** be operator-driven and **MUST** follow: `/prompts:speckit.specify` → `/prompts:speckit.plan` → `/prompts:speckit.tasks`. 
+
+## 1. Hard constraints
+
+* All automation/runtime execution **MUST** assume **WSL-only**; prerequisites **MUST** run via **bash/WSL shell**.
+* Repo **MUST** be a **monorepo**; it **MAY** be a single complex app or multiple simpler tools sharing DB/infra.
+* GitHub integration is a **MUST** for **version control, branching, PRs**; GitHub Issues **MUST NOT** be required.
 
 ## 2. Inputs ChatGPT MUST receive
 
 * Formal requirements document (authoritative).
 * This guide (authoritative for workflow).
 * `constitution.md` template (authoritative schema).
-* `slices-map` template (schema) **OR** permission to emit the table schema in §5.
+* Slice map JSON schema/contract (this document §6).
 
 ## 3. Outputs ChatGPT MUST produce
 
-### Phase 1 (for approval)
+### Phase 1 output (for operator approval)
 
-* **Meta-Plan**: scope boundaries, assumptions, unknowns/questions, slicing strategy.
-* **High-Level Plan**: target architecture, stack, repo structure, branching + PR workflow, WSL constraints.
+* **Meta-Plan**: scope boundaries, assumptions, unknowns/questions, slicing strategy, risk register.
+* **High-Level Plan**: architecture, stack, monorepo structure, DB/infra sharing strategy, branching/PR workflow.
 
-### Phase 2 (after approval)
+ChatGPT **MUST** STOP after Phase 1.
 
-* `constitution.md` filled from template.
-* Slice map table (one row per slice; includes dependencies + preferred order).
-* Per-slice **Codex input texts** for `/prompts:speckit.specify` (one block per slice).
+### Phase 2 output (after approval)
 
-## 4. Process constraints
-
-* ChatGPT **MUST** run a 2-phase process:
-
-  * **Phase 1:** Meta-Plan + High-Level Plan, then **STOP** for operator approval.
-  * **Phase 2:** Emit constitution + slice map + per-slice specify texts.
-* ChatGPT **MUST NOT** generate `spec.md`, `plan.md`, or `tasks.md`; Codex produces those via Spec-Kit.
-* ChatGPT **MUST** optimize slicing so each slice is an independently deliverable increment.
-* Each slice **SHOULD** declare dependencies and a preferred execution order.
-* Repo **MUST** standardize constitution location at `.specify/memory/constitution.md`; all prompts **MUST** reference it consistently.
+* `constitution.md` filled from the template.
+* `slices-map.json` (schema in §6).
+* Per-slice `specify` texts embedded in `slices-map.json` (one slice → one `/prompts:speckit.specify` input).
 
 ```mermaid
 flowchart TB
-  R["Requirements"] --> G1["ChatGPT Phase 1: Meta-Plan + High-Level Plan"]
-  G1 --> A["Operator Approval Gate"]
-  A --> G2["ChatGPT Phase 2: constitution + slice map + per-slice specify texts"]
-  G2 --> C["Operator runs Codex: specify → plan → tasks per slice (WSL/bash)"]
+  R["Requirements"] --> P1["ChatGPT Phase 1: Meta-Plan + High-Level Plan"]
+  P1 --> G["Operator Approval Gate"]
+  G --> P2["ChatGPT Phase 2: constitution.md + slices-map.json"]
+  P2 --> O["Operator runs Codex: specify → plan → tasks per slice (WSL/bash)"]
 ```
 
-## 5. Slice map schema (ChatGPT MUST output as a pipe table)
+## 4. Constitution requirements
 
-| Slice Key | Proposed Short Name | Core User Story | Depends On | Preferred Order | Scope (In/Out) | Shared Components | Data/Contracts Touchpoints | Codex `/prompts:speckit.specify` Input |
-| --------- | ------------------- | --------------- | ---------- | --------------- | -------------- | ----------------- | -------------------------- | -------------------------------------- |
+### 4.1 `constitution.md` MUST encode
 
-### 5.1 Slice scope contract
+* **GitHub branching + PR workflow** rules (naming, review gates, merge policy).
+* **WSL/bash-only** operational constraints (bash scripts are canonical).
+* **Monorepo structure** conventions and ownership boundaries.
+* **Stack** decisions and allowed variants; what requires explicit approval.
+* **Quality gates** that per-slice plans **MUST** satisfy (measurable; enforceable).
 
-A slice **MUST**:
+### 4.2 `constitution.md` MUST NOT encode
 
-* Deliver **one coherent capability** with a single primary user journey and clear success outcome.
-* Be **independently valuable** (shippable as an increment) and **independently testable** via acceptance scenarios.
-* Declare **explicit boundaries**: what is in-scope vs out-of-scope for this slice.
-* Declare **touchpoints** only: modules/services/components affected; DB/contract touchpoints at a high level.
-* Declare **dependencies** (other slices or shared components) and a **preferred execution order**.
+* Slice-specific implementation details (belong in per-slice `spec.md`/`plan.md`).
+* Task lists, task IDs, or sequencing (belong in `tasks.md`).
+* GitHub Issues workflows or “issues as gates”.
+* Secrets/credentials/tokens/keys or sensitive operational data.
+* Environment-specific absolute paths tied to a single machine/user.
+* Non-actionable aspirations (“be scalable/secure”) without enforceable gates.
 
-A slice **MUST NOT**:
+## 5. Slice contract (what a slice is)
 
-* Combine multiple unrelated user journeys or “grab-bag” enhancements.
-* Encode global architecture/stack decisions (those belong in `constitution.md`).
-* Include task breakdowns, task IDs, or implementation sequencing details (those belong in `/prompts:speckit.tasks` output).
-* Require cross-cutting refactors as a primary deliverable (refactors MAY be allowed only if explicitly justified and bounded).
-* Include secrets, credentials, tokens, or any sensitive operational data.
+### 5.1 A slice MUST
 
-Rules:
+* Deliver **one coherent capability** with a single primary user journey and success outcome.
+* Be **independently valuable** and **independently testable** via acceptance scenarios.
+* Declare boundaries: **in-scope** and **out-of-scope**.
+* Declare **dependencies** and **preferred execution order**.
 
-* **Slice Key**: stable identifier (e.g., `S01`) independent of Spec-Kit numeric branch assignment.
-* **Proposed Short Name**: kebab-case; **SHOULD** be unique; **SHOULD** map cleanly to Spec-Kit suffix.
-* **Depends On / Preferred Order**: **SHOULD** be explicit even if “none / earliest”.
-* **Codex input**: **MUST** be sufficient to generate `spec.md` (actors, flows, acceptance scenarios, constraints).
+### 5.2 A slice MUST NOT
 
-## 6. Per-slice `/prompts:speckit.specify` input contract
+* Combine unrelated journeys or “misc improvements”.
+* Encode global architecture/stack decisions (constitution owns those).
+* Include tasks/implementation steps/design-doc content.
+* Require broad refactors as its primary deliverable (unless explicitly bounded and approved).
+* Include secrets or environment-specific absolute paths.
 
-Each slice input block **MUST** include:
+## 6. Slice map JSON schema
 
-* **Title** + **Short Name** (explicit).
-* Primary actor(s), journey, and success outcome.
-* Acceptance scenarios (Given/When/Then) sufficient for independently testable user stories.
-* Non-functional constraints relevant to the slice (security/privacy/perf/operability).
-* Explicit integration points (monorepo modules, shared DB/infra touchpoints, auth constraints, PR workflow constraints).
-* At most **3** ambiguity questions; remaining unknowns **MUST** be resolved via defaults + recorded assumptions.
+### 6.1 File-level requirements
 
-Each slice input block **MUST NOT** include:
+* File name **SHOULD** be `slices-map.json`.
+* The file **MUST** be valid JSON and conform to this structure:
 
-* Detailed architecture diagrams or stack debates (reference constitution constraints instead).
-* Detailed schemas/migrations, endpoint-by-endpoint design, or “how to implement” instructions (those belong in plan/contracts/data-model artifacts created by Codex).
-* Any secrets or environment-specific absolute paths.
+```json
+{
+  "schema_version": "1.0",
+  "constitution_path": ".specify/memory/constitution.md",
+  "slices": [
+    {
+      "key": "S01",
+      "title": "Human readable title",
+      "short_name": "kebab-case-short-name",
+      "depends_on": ["S00"],
+      "order": 10,
+      "specify": "Exact arguments to pass to /prompts:speckit.specify"
+    }
+  ]
+}
+```
 
-## 7. Constitution generation requirements
+### 6.2 Field constraints
 
-### 7.1 What `constitution.md` MUST encode
+* `schema_version` **MUST** equal `"1.0"`.
+* `constitution_path` **MUST** equal `".specify/memory/constitution.md"` and all prompts **MUST** reference it consistently.
+* `slices[]` **MUST** be non-empty.
+* `key` **MUST** be unique and match `^S[0-9]{2,3}$`.
+* `short_name` **MUST** be kebab-case `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
+* `depends_on` **MAY** be omitted; if present it **MUST** contain only valid `key` values.
+* `order` **MAY** be omitted; if present it **MUST** be a positive integer (used only for tie-breaking).
+* `specify` **MUST** be directly usable as `/prompts:speckit.specify` input text.
 
-`constitution.md` **MUST** encode:
+### 6.3 `specify` content contract
 
-* GitHub usage **MUST** include branching and PR workflow (issues **MUST NOT** be required).
-* WSL-only execution constraints: bash-first; prerequisites checks **MUST** run via WSL shell.
-* Monorepo structure conventions and ownership boundaries.
-* Stack decisions and allowed variants (and what requires explicit approval).
-* Quality gates that Codex plans **MUST** satisfy (simplicity/consistency/testing/observability as applicable).
+Each `specify` string **MUST** include:
 
-### 7.2 What `constitution.md` MUST NOT encode
+* `Short Name: <short_name>`
+* Goal (what success looks like)
+* Primary actor(s) and user journey
+* Acceptance scenarios in Given/When/Then form
+* Slice-relevant constraints (security/privacy/perf/operability)
+* Explicit integration points (monorepo modules; shared DB/infra touchpoints; PR constraints)
+* At most **3** open questions; remaining unknowns **MUST** be resolved via defaults + recorded assumptions
 
-`constitution.md` **MUST NOT** encode:
+Each `specify` string **MUST NOT** include:
 
-* Slice-specific implementation details (those belong in per-slice `spec.md`/`plan.md`).
-* Concrete task lists or task IDs (those belong in `tasks.md`).
-* GitHub Issues workflows or “issues as gates” (explicitly out of scope).
-* Secrets, credentials, tokens, API keys, or any sensitive operational data.
-* Environment-specific absolute paths tied to a single machine/user (except the repo-relative constitution location policy in §4).
-* Detailed UI copywriting/marketing text unless globally mandated by requirements.
-* Hard commitments to specific third-party vendors/services unless explicitly mandated and approved in Phase 1.
-* Aspirational statements without enforceable gates (“be scalable”, “be secure”).
+* task breakdowns or implementation steps
+* detailed schema migrations / endpoint-by-endpoint design
+* secrets or environment-specific absolute paths
 
-## 8. Codex handoff protocol (operator-run; explicit agency)
+## 7. Operator execution protocol (Codex; explicit agency)
 
-For each slice row (in preferred order):
+1. Operator **MUST** compute execution order by:
 
-1. Operator **MUST** run `/prompts:speckit.specify` using the slice’s input block.
-2. Operator **MUST** run `/prompts:speckit.plan` in the feature context created by the specify step.
-3. Operator **MUST** run `/prompts:speckit.tasks` in the same feature context.
-4. Operator **SHOULD** run `/prompts:speckit.analyze` after tasks generation (read-only consistency check).
-5. Operator **MUST** use bash scripts / WSL shell execution for prerequisites and script-backed steps.
+   * topologically sorting by `depends_on`,
+   * then ascending `order` (if present),
+   * then ascending `key`.
+2. For each slice in that order, Operator **MUST** run:
+
+   * `/prompts:speckit.specify` with `slice.specify`
+   * `/prompts:speckit.plan` in the feature context created by the specify step
+   * `/prompts:speckit.tasks` in the same feature context
+3. Operator **SHOULD** run `/prompts:speckit.analyze` after tasks generation (read-only).
+4. Operator **MUST** use **bash/WSL shell execution** for all prerequisite/script-backed steps.
+
+## 8. Assumptions
+
+* The operator provides ChatGPT the requirements and templates; ChatGPT produces only constitution + slice map + specify inputs.
+* The Codex runner can execute `.specify` bash scripts on WSL and write feature artifacts under `specs/`.
+* Spec-Kit numeric branch assignment is handled during the Codex `specify` step; the slice `key` remains the stable cross-slice identifier.
