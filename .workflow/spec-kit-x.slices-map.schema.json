@@ -57,6 +57,7 @@
         "specify": {
           "type": "string",
           "minLength": 50,
+          "pattern": "^[^\\r]*$",
           "description": "Exact text to pass as arguments to /prompts:speckit.specify."
         }
       }
