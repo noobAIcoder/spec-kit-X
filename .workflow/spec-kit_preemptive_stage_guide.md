@@ -113,15 +113,3 @@ Each slice input block **MUST** include:
 * Detailed UI copywriting, marketing text, or product messaging (unless it is a global compliance requirement).
 * Hard commitments to specific third-party vendors/services **unless** they are explicitly mandated by requirements and approved in Phase 1.
 * Non-actionable aspirational statements (“be scalable”, “be secure”) without enforceable gates or measurable criteria.
-
----
-
-## 8. Codex handoff protocol (operator-run; explicit agency)
-
-For each slice row (in preferred order):
-
-1. Operator **MUST** run `/prompts:speckit.specify` using the slice’s input block.
-2. Operator **MUST** run `/prompts:speckit.plan` in the feature context created by the specify step.
-3. Operator **MUST** run `/prompts:speckit.tasks` in the same feature context.
-4. Operator **SHOULD** run `/prompts:speckit.analyze` after tasks generation (read-only consistency check).
-5. Operator **MUST** use bash scripts / WSL shell execution for prerequisites and script-backed steps.
