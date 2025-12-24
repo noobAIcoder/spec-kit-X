@@ -112,7 +112,7 @@ flowchart TB
 * `constitution_path` **MUST** equal `".specify/memory/constitution.md"` and all prompts **MUST** reference it consistently.
 * `slices[]` **MUST** be non-empty.
 * `key` **MUST** be unique and match `^S[0-9]{2,3}$`.
-* `short_name` **MUST** be kebab-case `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
+* `short-name` **MUST** be kebab-case `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
 * `depends_on` **MAY** be omitted; if present it **MUST** contain only valid `key` values.
 * `order` **MAY** be omitted; if present it **MUST** be a positive integer (used only for tie-breaking).
 * `specify` **MUST** be directly usable as `/prompts:speckit.specify` input text.

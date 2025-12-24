@@ -1,70 +1,65 @@
-# 1. Meta-requirements for the Formal Requirements Document (FRD)
+# A. FRD Meta‑requirements
 
-## 1.1 Document purpose and authority
+## A1. SoT governance
 
-* The FRD **MUST** be the project’s highest-authority SoT for:
+1. The FRD **MUST** be the single authoritative Source of Truth for:
+   * product intent and scope,
+   * global constraints and architecture direction,
+   * user scenarios and measurable success criteria,
+   * the authoritative list of requirements and slice candidates.
 
-  * product intent (what/why),
-  * hard constraints (how/where boundaries),
-  * success criteria,
-  * scope and non-scope.
-* The FRD **MUST** explicitly state: **when conflicts arise, FRD wins**; all derived artifacts (constitution, slice map, per-slice prompts) **MUST** be regenerated or corrected to match it. 
+2. The FRD **MUST** include: version, status, owner, approvers, ratification date, change log.
 
-## 1.2 Scope: what belongs in FRD (and what does not)
+3. The FRD **MUST** define precedence rules (e.g., Constitution > FRD > Slice Specs > Plans > Tasks).
 
-FRD **MUST** include:
+4. The FRD **MUST** separate: **Requirements** vs **Assumptions** vs **Open Questions**.
 
-* **Core user outcomes** (who, what, why)
-* **Core features/user stories** at portfolio level (candidate slices)
-* **Cross-cutting requirements** (auth, permissions, auditing, compliance, observability, etc.)
-* **Hard constraints**:
+## A2. Spec‑Kit taxonomy and structure
 
-  * GitHub integration is **MUST**
-  * Agent runs on **WSL only**
-  * **Monorepo** requirement
-  * “Single complex app vs multiple simple tools sharing DB/infra” decision or explicit option set
-  * stack constraints (fixed, preferred, or TBD with decision criteria)
+5. The FRD **MUST** use these **canonical headings** (verbatim) to reduce drift:
+   * `User Scenarios & Testing *(mandatory)*`
+   * `Requirements *(mandatory)*` with `Functional Requirements` and `Non‑Functional Requirements`
+   * `Key Entities *(include if feature involves data)*`
+   * `Success Criteria *(mandatory)*` with `Measurable Outcomes`
+   * `Edge Cases`
 
-FRD **MUST NOT** include:
+6. The FRD **MUST** express user work as **User Stories** with priorities **P1/P2/P3** (matching Spec‑Kit templates).
 
-* implementation-level task lists,
-* detailed code structure,
-* “plan.md”-style detailed technical sequencing (Codex will do that per slice).
+7. The FRD **MUST** express behavior in **Acceptance Scenarios** (Given/When/Then).
 
-## 1.3 Writing style and structure requirements
+8. Ambiguity **MUST** be recorded as `[NEEDS CLARIFICATION: …]` and also listed in an `Open Questions` section (so the marker is not lost).
 
-* FRD **MUST** be written in Markdown.
-* FRD **MUST** use **normative language**: MUST / SHOULD / MAY (RFC 2119 semantics).
-* FRD **MUST** separate:
+## A3. Requirement identity and testability
 
-  * **Facts** (known requirements),
-  * **Decisions** (committed choices),
-  * **Assumptions** (defaults used in absence of info),
-  * **Open Questions** (blockers; SHOULD be minimal and prioritized).
-* Each requirement **MUST** be **testable** or **verifiable** (even if not automated).
-* Each requirement **MUST** be uniquely identifiable (e.g., `FR-##`, `NFR-##`, `CON-##`).
+9. Every requirement **MUST** have an ID and modality:
+   * `FR-###` for functional requirements (`System MUST …`)
+   * `NFR-###` for non-functional requirements (`System MUST …` + metric/threshold)
+   * `C-###` for constraints (`System MUST …`)
 
-## 1.4 Traceability requirements (critical for slicing)
+10. Each `FR-###` **MUST** include:
 
-* FRD **MUST** include a **Core Features / Candidate Slices** section.
-* For each candidate slice, FRD **MUST** include:
+* a rationale,
+* at least one acceptance scenario (or an explicit reference to a user story scenario),
+* verification guidance (what would constitute proof).
 
-  * primary actor and goal,
-  * success outcome,
-  * acceptance scenarios (Given/When/Then),
-  * key data touched,
-  * key integrations touched,
-  * explicit scope boundaries.
-* FRD **SHOULD** include a mapping from “cross-cutting requirements” → “slices impacted” (even if approximate).
+## A4. Slice‑candidate alignment (no fully specified slices)
 
-## 1.5 Quality constraints for “executable” requirements
+11. The FRD **MUST** contain a **Slice Candidates** section, but it **MUST NOT** contain completed per-slice `spec.md` content.
 
-To be usable as SoT in an SDD pipeline (transformations rather than hand-wavy guidance), FRD **MUST**:
+12. Each slice candidate **MUST** include:
 
-* minimize ambiguity and internal contradiction, 
-* define measurable success criteria,
-* define “done” for MVP and for V1,
-* define operational realities (environments, constraints, compliance),
-* define what is explicitly out of scope to prevent feature creep.
+* `key` patterned like `S01`/`S001` (per schema), 
+* a `short-name` that matches the kebab-case rule, 
+* dependency keys (`depends_on`) and an execution order,
+* references back to user stories and `FR-###/NFR-###`.
 
----
+13. Each `FR-###` **MUST** map to ≥1 slice candidate key (or be explicitly marked “system-wide / cross-slice”).
+
+## A5. Workflow constraints (your hard requirements)
+
+14. The FRD **MUST** include global constraints for:
+
+* **GitHub is mandatory** (repo + workflow; optionally product integration if applicable),
+* **WSL-only execution** (bash-first; no required PowerShell),
+* **monorepo** structure,
+* shared DB/infra reality (single complex app vs multiple tools sharing DB/infra) as a decision or chosen direction.

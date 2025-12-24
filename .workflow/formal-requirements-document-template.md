@@ -1,134 +1,159 @@
-# Formal Requirements Document (FRD): <Project Name>
+# B. FRD Template
 
-**Version**: 0.1 | **Date**: YYYY-MM-DD | **Owner**: <Name/Team>
-**Status**: Draft | Reviewed: [ ] Product [ ] Eng [ ] Operator
+**Use the headings below exactly.**
 
-## 0. Authority and Change Rules
+## 0. Document Control
 
-- This FRD is the **Source of Truth (SoT)** for this project.
-- Derived artifacts (constitution, slice map, per-slice spec prompts, plans, tasks) MUST match this FRD.
-- Change control: <how updates are approved + versioned>.
+* **Project Name**:
+* **FRD Version**:
+* **Status**: Draft / Approved / Superseded
+* **Owner**:
+* **Approvers**:
+* **Ratified**:
+* **Last Amended**:
+* **Change Log**:
 
-## 1. Problem Statement
+  * vX.Y — date — summary — author
 
-- What problem are we solving?
-- Why now?
-- Who is impacted?
+## 1. Context
 
-## 2. Goals and Success Metrics
+### 1.1 Problem Statement
 
-### 2.1 Goals (MUST)
+### 1.2 Goals
 
-- G-01: ...
-- G-02: ...
+### 1.3 Non‑Goals
 
-### 2.2 Non-Goals (Out of scope)
+### 1.4 Scope Boundaries
 
-- NG-01: ...
-- NG-02: ...
+* In scope:
+* Out of scope:
 
-### 2.3 Success Metrics / KPIs (measurable)
+## 2. Operating Constraints *(mandatory)*
 
-- KPI-01: ...
-- KPI-02: ...
+> Write these as `C-###: System MUST …`
 
-## 3. Users and Context
+* **C-001 GitHub Workflow**: System MUST use GitHub for repo + PR workflow (branch protections, reviews, issue tracking expectations).
+* **C-002 WSL‑Only Execution**: System MUST assume automation/agents run on WSL; bash-first; no required PowerShell.
+* **C-003 Monorepo**: System MUST be structured as a monorepo with defined module boundaries.
+* **C-004 Shared Infra**: System MUST [use one shared DB/infra OR define multiple stacks] — [NEEDS CLARIFICATION if undecided].
+* **C-005 Stack Constraints**: System MUST constrain language/framework/storage options (see §6).
 
-### 3.1 Personas / Actors
+## 3. User Scenarios & Testing *(mandatory)*
 
-- P-01: <actor> — motivations, constraints
-- P-02: ...
+> Write like Spec‑Kit: prioritized, independently testable journeys.
 
-### 3.2 Key User Journeys (portfolio-level)
+### User Story 1 — [Title] (Priority: P1)
 
-- J-01 (P1): ...
-- J-02 (P2): ...
+[Plain-language journey]
 
-## 4. Core Features / Candidate Slices (Slice == Spec-Kit Feature)
+**Independent Test**: [how to test story alone]
 
-For each slice, include: Actor, Goal, Scope, Acceptance Scenarios, Data, Integrations.
+**Acceptance Scenarios**:
 
-### Slice Candidate C-01: <Name>
+1. **Given** … **When** … **Then** …
 
-- **Primary Actor**: ...
-- **User Goal**: ...
-- **In Scope**: ...
-- **Out of Scope**: ...
-- **Acceptance Scenarios**:
-  1) Given ... When ... Then ...
-  2) Given ... When ... Then ...
-- **Data touched**: ...
-- **Integrations touched**: ...
-- **Notes / Risks**: ...
+### User Story 2 — [Title] (Priority: P2)
 
-(Repeat for C-02, C-03, ...)
+…
 
-## 5. Functional Requirements (global, cross-slice)
+### User Story 3 — [Title] (Priority: P3)
 
-List only globally true requirements here; slice-specific details belong in section 4.
+…
 
-- FR-001: System MUST ...
-- FR-002: System MUST ...
-- FR-003: System SHOULD ...
-- FR-004: System MAY ...
+### Edge Cases
 
-## 6. Non-Functional Requirements (NFRs)
+* EC‑001 …
+* EC‑002 …
 
-### 6.1 Security & Privacy
+## 4. Requirements *(mandatory)*
 
-- NFR-SEC-001: ...
-- NFR-SEC-002: ...
+### Functional Requirements
 
-### 6.2 Performance & Scalability
+> Use bullet style to match Spec‑Kit spec template.
 
-- NFR-PERF-001: ...
-- NFR-PERF-002: ...
+* **FR-001**: System MUST …
 
-### 6.3 Reliability & Availability
+  * **Rationale**:
+  * **References**: (User Story IDs / scenario numbers)
+  * **Verification**: (demo/test/log/metric)
+* **FR-002**: System MUST …
+  …
 
-- NFR-REL-001: ...
+### Non‑Functional Requirements
 
-### 6.4 Observability & Operations
+* **NFR-001 (Performance)**: System MUST …
 
-- NFR-OBS-001: logs/metrics/traces requirements
-- NFR-OBS-002: auditability requirements
+  * **Target**: (numeric threshold)
+  * **Verification**:
+* **NFR-002 (Security/Privacy)**: System MUST …
+  …
 
-## 7. Hard Constraints (non-negotiable)
+## 5. Key Entities *(include if feature involves data)*
 
-- CON-001: GitHub integration is MUST (repo + PR workflow + issue tracking requirements).
-- CON-002: Agent execution environment MUST be WSL-only.
-- CON-003: Repository MUST be a monorepo.
-- CON-004: App topology MUST be: [choose] single app OR multiple tools sharing DB/infra OR TBD with decision criteria.
-- CON-005: Stack constraints: [fixed | preferred | TBD], plus decision criteria if TBD.
+* **[Entity 1]**: description, key fields, invariants, retention
+* **[Entity 2]**: …
 
-## 8. Data and Compliance (if applicable)
+## 6. Success Criteria *(mandatory)*
 
-- Data classification: ...
-- Retention: ...
-- PII handling: ...
-- Compliance requirements: ...
+### Measurable Outcomes
 
-## 9. Integrations and External Dependencies
+* **SC-001**: …
+* **SC-002**: …
 
-- INT-001: ...
-- INT-002: ...
+## 7. Global Technical Context *(feeds constitution + downstream plans)*
 
-## 10. Open Questions (prioritized)
+> Keep field names aligned with Spec‑Kit plan template.
 
-- Q-01 (P0): ...
-- Q-02 (P1): ...
+* **Language/Version**: [or NEEDS CLARIFICATION]
+* **Primary Dependencies**: [or NEEDS CLARIFICATION]
+* **Storage**: [or N/A / NEEDS CLARIFICATION]
+* **Testing**: [or NEEDS CLARIFICATION]
+* **Target Platform**: [or NEEDS CLARIFICATION]
+* **Project Type**: [single/web/mobile/multi-tool; drives repo structure]
+* **Constraints**: [performance, compliance, hosting, licensing]
 
-## 11. Assumptions
+## 8. Constitution Inputs *(do not write constitution here; only inputs)*
 
-- A-01: ...
-- A-02: ...
+> The constitution template in spec-kit contains placeholders for: Project name, principles, governance, and additional sections.
 
-## 12. Acceptance: “Definition of Done” for MVP and V1
+* **Project Name**: …
+* **Core Principles candidates** (names + 2–5 line descriptions each):
 
-### MVP Done Criteria
+  * P‑01: [PRINCIPLE_NAME] — [DESCRIPTION]
+  * P‑02: …
+* **Additional Sections candidates**:
 
-- D-MVP-01: ...
+  * Section‑A name: …
+  * Section‑A content outline: …
+* **Governance rules candidates**:
 
-### V1 Done Criteria
+  * G‑01 …
+  * G‑02 …
 
-- D-V1-01: ...
+## 9. Slice Candidates *(Spec‑Kit Features; candidates only)*
+
+> Use this table to match the slice taxonomy and reduce drift.
+
+| key (S##) | title | short-name | depends_on | order | covers (Stories / FRs) | notes |
+| --------- | ----- | ---------- | ---------- | ----: | ---------------------- | ----- |
+
+Rules:
+
+* `key` **MUST** match `^S[0-9]{2,3}$`. 
+* `short-name` **MUST** be kebab-case per schema constraints. 
+* `covers` **MUST** reference User Stories + `FR-###/NFR-###`.
+
+## 10. Traceability *(mandatory)*
+
+| Requirement ID | User Story / Scenario | Slice Candidate key(s) |
+| -------------- | --------------------- | ---------------------- |
+
+## 11. Open Questions *(mandatory if any)*
+
+* **Q-001**: [NEEDS CLARIFICATION: …] — impact — owner — deadline
+* **Q-002**: …
+
+## 12. Assumptions
+
+* **A-001**: …
+* **A-002**: …

@@ -1,32 +1,28 @@
-# 3. FRD quality checklist (use as “unit tests” for SoT)
+# C. FRD Quality Checklist
 
-Use this as the operator’s readiness gate before ChatGPT proceeds to architecture/constitution/slicing.
+## C1. Structure and taxonomy
 
-## Completeness
+* [ ] FRD uses the canonical headings: **User Scenarios & Testing**, **Requirements**, **Key Entities**, **Success Criteria**, **Edge Cases**.
+* [ ] User Stories are formatted as **User Story N — Title (Priority: P1/P2/P3)**.
+* [ ] Acceptance scenarios use **Given/When/Then** and are numbered.
+* [ ] Ambiguity uses `[NEEDS CLARIFICATION: …]` and each marker is also captured in **Open Questions**.
 
-* [ ] Goals and non-goals are explicit.
-* [ ] At least one persona and at least one P1 journey exist.
-* [ ] Candidate slices exist and cover all goals.
-* [ ] Cross-cutting requirements (auth/security/ops) are stated or intentionally N/A.
+## C2. Requirement quality
 
-## Testability / Verifiability
+* [ ] Every `FR-###` is testable, single-scope (no compound “and/or”), and uses MUST/SHOULD/MAY.
+* [ ] Every `NFR-###` includes a measurable target or an explicit justification for why it cannot.
+* [ ] Every requirement has verification guidance (how it will be proven).
 
-* [ ] Each FR/NFR/CON statement is testable or verifiable (no vague adjectives without criteria).
-* [ ] Each slice has Given/When/Then scenarios.
+## C3. Slice candidate readiness
 
-## Constraint clarity (your must-haves)
+* [ ] Slice Candidates section exists and includes **only candidates**, not full per-slice specs.
+* [ ] Every slice candidate has `key`, `short-name`, dependencies (if any), and an execution order.
+* [ ] Each slice candidate represents an independently deliverable user outcome (at least for P1 slices).
+* [ ] Every `FR-###` maps to ≥1 slice key or is explicitly “system-wide”.
 
-* [ ] GitHub integration requirements are explicit (what exactly “integration” means here).
-* [ ] WSL-only constraint is explicit (what is allowed/not allowed).
-* [ ] Monorepo is explicit (expected package/module boundaries).
-* [ ] “Single app vs multiple tools sharing DB/infra” is decided OR defined as an explicit decision point with criteria.
+## C4. Workflow constraints correctness
 
-## Traceability for Spec Kit
-
-* [ ] Each candidate slice can become a standalone Spec Kit feature without inventing scope.
-* [ ] Cross-cutting requirements note which slices they impact (at least qualitatively).
-
-## Minimal ambiguity
-
-* [ ] Open questions are prioritized and limited to true blockers.
-* [ ] Assumptions are explicitly recorded (so they can be surfaced during approval).
+* [ ] GitHub workflow constraints are explicit (repo + PR + reviews + issues expectations).
+* [ ] WSL-only constraints are explicit (bash-first; no required PowerShell).
+* [ ] Monorepo structure is defined enough to prevent per-slice drift.
+* [ ] Shared DB/infra decision is explicit or recorded as a decision item with options.
